@@ -1,14 +1,30 @@
 require 'rspec'
 require_relative '../lib/tictactoe.rb'
-require_relative '../lib/player.rb'
 require_relative '../lib/board.rb'
+require_relative '../dummy/dummy_player.rb'
+require_relative '../dummy/dummy_message.rb'
 
 describe "Tictactoe" do
 
   let(:board) { Board.new }
-  let(:foo) { Player.new({name: 'foo', letter: 'X'}) }
-  let(:bar) { Player.new({name: 'bar', letter: 'O'}) }
-  let(:ttt) { TicTacToe.new(board, [foo, bar]) }
+  let(:foo) { DummyPlayer.new({name: 'foo', letter: 'X'}) }
+  let(:bar) { DummyPlayer.new({name: 'bar', letter: 'O'}) }
+  let(:message) { DummyMessage.new }
+  let(:ttt) { TicTacToe.new(board, [foo, bar], message) }
+
+  context "#initialize" do
+    it "randomly selects a player as the current player" do
+      allow_any_instance_of(Array).to receive(:shuffle).and_return([foo, bar])
+
+      expect(ttt.current_player).to eq(foo)
+    end
+
+    it "selects the remaining player as the next player" do
+      allow_any_instance_of(Array).to receive(:shuffle).and_return([foo, bar])
+
+      expect(ttt.next_player).to eq(bar)
+    end
+  end
 
   context "#switch_players" do
     it "switches current player to next player" do
@@ -26,19 +42,11 @@ describe "Tictactoe" do
     end
   end
 
-  context "#messages" do
-    it "returns 'foo won!' if foo wins" do
-      allow(ttt).to receive(:current_player).and_return(foo)
-      allow(ttt).to receive(:game_over).and_return(:winner)
+  context "#player_move" do
+    it "converts the player number into coordinates" do
+      correct_coordinates = [1, 0]
 
-      expect(ttt.game_over_message).to eq("foo won!")
-    end
-
-    it "returns 'Cat's game!' if the game ends in a draw" do
-      allow(ttt).to receive(:current_player).and_return(bar)
-      allow(ttt).to receive(:game_over).and_return(:draw)
-
-      expect(ttt.game_over_message).to eq("Cat's game!")
+      expect(ttt.get_move(4)).to eq(correct_coordinates)
     end
   end
 end

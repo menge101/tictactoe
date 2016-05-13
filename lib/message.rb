@@ -4,6 +4,10 @@ class Message
     return "#{name} (#{letter}), select a space:"
   end
 
+  def invalid_cell_number
+    return "Invalid cell number. Try again"
+  end
+
   def unavailable_cell
     return "Cell is unavailable. Try again"
   end

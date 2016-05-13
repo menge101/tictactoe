@@ -13,6 +13,14 @@ describe "Message" do
     end
   end
 
+  context "#invalid_cell_number" do
+    it "prints message if cell number is invalid" do
+      correct_message = "Invalid cell number. Try again"
+
+      expect(message.invalid_cell_number).to eq(correct_message)
+    end
+  end
+
   context "#unavailable_cell" do
     it "prints the unavailable cell message" do
       correct_message = "Cell is unavailable. Try again"

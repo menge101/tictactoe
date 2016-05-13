@@ -1,32 +1,28 @@
 class TicTacToe
 
-  attr_reader :board, :players, :current_player, :next_player
+  attr_reader :board, :players, :message, :current_player, :next_player
 
-  def initialize(board, players)
+  def initialize(board, players, message)
     @board = board
     @players = players
+    @message = message
     @current_player, @next_player = players.shuffle
     @turn_count = 1
   end
 
   def game
-    puts ""
-    board.display_board
     while true
-      puts ""
-      puts "#{current_player.name}, select a cell:"
-      cell_number = gets.chomp.to_i
-      x, y = board.number_to_coordinates(cell_number)
+      board.display_board
+      puts message.player_move(current_player.name, current_player.letter)
+      x, y = get_move
       until board.cell_available?(x, y)
-        puts "Cell unavailable! Try again"
-        cell_number = gets.chomp.to_i
-        x, y = board.number_to_coordinates(cell_number)
+        puts message.unavailable_cell
+        x, y = get_move
       end
       board.write_cell(x, y, current_player.letter)
-      puts ""
-      board.display_board
       if game_over
-        puts game_over_message
+        board.display_board
+        puts message.game_over(game_over, current_player.name)
         return
       else
         @turn_count += 1
@@ -35,19 +31,26 @@ class TicTacToe
     end
   end
 
+  def get_move(cell_number = gets.chomp.to_i)
+    until valid_cell_number(cell_number)
+      puts message.invalid_cell_number
+      cell_number = gets.chomp.to_i
+    end
+    number_to_coordinates(cell_number)
+  end
+
+  def switch_players
+    @current_player, @next_player = @next_player, @current_player
+  end
+
+
+  private
+
   def game_over
     if win?
       return :winner
     elsif draw?
       return :draw
-    end
-  end
-
-  def game_over_message
-    if game_over == :winner
-      return "#{current_player.name} won!"
-    elsif game_over == :draw
-      return "Cat's game!"
     end
   end
 
@@ -71,7 +74,22 @@ class TicTacToe
     end
   end
 
-  def switch_players
-    @current_player, @next_player = @next_player, @current_player
+  def valid_cell_number(cell_number)
+    cell_number >= 1 && cell_number <= 9
+  end
+
+  def number_to_coordinates(cell_number)
+    mapping = {
+      1 => [0, 0],
+      2 => [0, 1],
+      3 => [0, 2],
+      4 => [1, 0],
+      5 => [1, 1],
+      6 => [1, 2],
+      7 => [2, 0],
+      8 => [2, 1],
+      9 => [2, 2]
+    }
+    mapping[cell_number]
   end
 end
