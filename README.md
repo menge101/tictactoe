@@ -7,4 +7,4 @@ cd into project directory and lib file:
 `cd tictactoe/lib`
 
 To play:
-`ruby game.rb`
+`ruby play.rb`
