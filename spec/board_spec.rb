@@ -26,6 +26,14 @@ describe "Board" do
       expect(board.cell_available?(1, 1)).to be false
     end
 
+    it "returns true for a valid cell number (1-9)" do
+      expect(board.valid_cell_number(3)).to be true
+    end
+
+    it "returns false for an invalid cell number !(1-9)" do
+      expect(board.valid_cell_number(10)).to be false
+    end
+
     it "writes a value into specified cell" do
       grid = [[1, 'X', 3], ['hello', 5, 6], [7, 8, 'O']]
       board.write_cell(0, 1, 'X')
@@ -109,6 +117,14 @@ describe "Board" do
       board.write_cell(2, 0, 'X')
 
       expect(board.diagonals).to eq true
+    end
+  end
+
+  context "#coordinates" do
+    it "returns the corresponding coordinates for given cell number" do
+      expect(board.number_to_coordinates(1)).to eq([0, 0])
+      expect(board.number_to_coordinates(5)).to eq([1, 1])
+      expect(board.number_to_coordinates(9)).to eq([2, 2])
     end
   end
 end
