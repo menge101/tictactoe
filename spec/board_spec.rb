@@ -1,15 +1,29 @@
 require 'rspec'
 require_relative '../lib/board.rb'
+require_relative '../lib/cell.rb'
 
 describe "Board" do
 
-  let(:board) { Board.new }
+  let(:board) { Board.new(3) }
 
   context "#initialize" do
-    it "creates an empty board by default" do
-      grid = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+    it "creates a 3x3 grid by default" do
+      grid_size = 3
+      board.grid.each do |column|
+        expect(column.size).to eq(3)
+      end
 
-      expect(board.grid).to eq(grid)
+      expect(board.grid.length).to eq(3)
+    end
+
+    it "creates a 4x4 grid by default" do
+      grid_size = 4
+      board = Board.new(grid_size)
+      board.grid.each do |column|
+        expect(column.size).to eq(4)
+      end
+
+      expect(board.grid.length).to eq(4)
     end
   end
 
@@ -21,110 +35,118 @@ describe "Board" do
     end
 
     it "returns false if cell is unavailable" do
+      board = Board.new(4)
       board.write_cell(1, 1, 'O')
 
       expect(board.cell_available?(1, 1)).to be false
     end
 
-    it "returns true for a valid cell number (1-9)" do
-      expect(board.valid_cell_number(3)).to be true
+    it "returns true for a valid cell number for 3x3 grid (1-9)" do
+      expect(board.valid_cell_number?(5)).to be true
     end
 
-    it "returns false for an invalid cell number !(1-9)" do
-      expect(board.valid_cell_number(10)).to be false
+    it "returns true for a valid cell number for 4x4 grid (1-16)" do
+      board = Board.new(4)
+
+      expect(board.valid_cell_number?(14)).to be true
     end
 
-    it "writes a value into specified cell" do
-      grid = [[1, 'X', 3], ['hello', 5, 6], [7, 8, 'O']]
-      board.write_cell(0, 1, 'X')
-      board.write_cell(1, 0, 'hello')
-      board.write_cell(2, 2, 'O')
+    it "returns false for an invalid cell number for 3x3 grid !(1-9)" do
+      expect(board.valid_cell_number?(10)).to be false
+    end
 
-      expect(board.grid).to eq(grid)
+    it "returns false for an invalid cell number for 4x4 grid !(1-16)" do
+      board = Board.new(4)
+
+      expect(board.valid_cell_number?(19)).to be false
     end
 
     it "gets the value from specified cell" do
-      board.write_cell(1, 2, 'test')
+      grid = [["hi", "", ""], ["", "", "test"], ["", "", ""]]
+      board = Board.new(3, grid: grid)
 
+      expect(board.get_cell(0, 0)).to eq('hi')
       expect(board.get_cell(1, 2)).to eq('test')
+    end
+
+    it "writes to the cell" do
+      grid = [["", "", ""], [Cell.new("X"), "", ""], ["", Cell.new("O"), ""]]
+      board = Board.new(3, grid: grid)
+      board.write_cell(1, 0, "test")
+      board.write_cell(2, 1, "another test")
+
+      expect(board.get_cell(1, 0).value).to eq("test")
+      expect(board.get_cell(2, 1).value).to eq("another test")
     end
   end
 
-  context "#horizontals" do
-    it "returns true for matching top row" do
+  context "#game_over" do
+    it "returns false if game is not over yet" do
+      grid = [Cell.new("X"), Cell.new("O"), ""]
+      board = Board.new(3, grid: grid)
+    end
+
+    it "returns win if diagonal match" do
+      cell = Cell.new
+      grid = [[cell, cell, cell], [cell, cell, cell], [cell, cell, cell]]
+      board = Board.new(3, grid: grid)
+
+      board.write_cell(2, 0, 'X')
+      board.write_cell(1, 1, 'X')
+      board.write_cell(0, 2, 'X')
+
+      expect(board.win?).to be true
+    end
+
+    it "returns win if horizontal match" do
+      cell = Cell.new
+      grid = [[cell, cell, cell], [cell, cell, cell], [cell, cell, cell]]
+      board = Board.new(3, grid: grid)
+
       board.write_cell(0, 0, 'X')
       board.write_cell(0, 1, 'X')
       board.write_cell(0, 2, 'X')
 
-      expect(board.horizontals).to eq true
+      expect(board.win?).to be true
     end
 
-    it "returns true for matching middle row" do
-      board.write_cell(1, 0, 'O')
-      board.write_cell(1, 1, 'O')
-      board.write_cell(1, 2, 'O')
+    it "returns win if vertical match" do
+      cell = Cell.new
+      grid = [[cell, cell, cell, cell], [cell, cell, cell, cell], [cell, cell, cell, cell], [cell, cell, cell, cell]]
+      board = Board.new(4, grid: grid)
 
-      expect(board.horizontals).to eq true
-    end
-
-    it "returns true for matching bottom row" do
-      board.write_cell(2, 0, 'hi')
-      board.write_cell(2, 1, 'hi')
-      board.write_cell(2, 2, 'hi')
-
-      expect(board.horizontals).to eq true
-    end
-  end
-
-  context "#verticals" do
-    it "returns true for matching left column" do
-      board.write_cell(0, 0, 'hi')
-      board.write_cell(1, 0, 'hi')
-      board.write_cell(2, 0, 'hi')
-
-      expect(board.verticals).to eq true
-    end
-
-    it "returns true for matching middle column" do
-      board.write_cell(0, 1, 'X')
-      board.write_cell(1, 1, 'X')
-      board.write_cell(2, 1, 'X')
-
-      expect(board.verticals).to eq true
-    end
-
-    it "returns true for matching right column" do
-      board.write_cell(0, 2, 'O')
-      board.write_cell(1, 2, 'O')
-      board.write_cell(2, 2, 'O')
-
-      expect(board.verticals).to eq true
-    end
-  end
-
-  context "#diagonals" do
-    it "returns true for matching top left, bottom right diagonal" do
       board.write_cell(0, 0, 'O')
-      board.write_cell(1, 1, 'O')
-      board.write_cell(2, 2, 'O')
+      board.write_cell(1, 0, 'O')
+      board.write_cell(2, 0, 'O')
+      board.write_cell(3, 0, 'X')
 
-      expect(board.diagonals).to eq true
+      expect(board.win?).to be true
     end
 
-    it "returns true for matching top right, bottom left diagonal" do
+    it "returns true for draw" do
+      grid = [Cell.new("X"), Cell.new("O"), Cell.new("hi")]
+      board = Board.new(3, grid: grid)
+
+      expect(board.draw?).to be true
+    end
+
+    it "returns draw if no match" do
+      cell = Cell.new
+      grid = [[cell, cell, cell], [cell, cell, cell], [cell, cell, cell]]
+      board = Board.new(3, grid: grid)
+
+      board.write_cell(0, 0, 'O')
+      board.write_cell(0, 1, 'O')
       board.write_cell(0, 2, 'X')
+      board.write_cell(1, 0, 'O')
       board.write_cell(1, 1, 'X')
-      board.write_cell(2, 0, 'X')
+      board.write_cell(1, 2, 'O')
+      board.write_cell(2, 0, 'O')
+      board.write_cell(2, 1, 'X')
+      board.write_cell(2, 2, 'X')
 
-      expect(board.diagonals).to eq true
-    end
-  end
-
-  context "#coordinates" do
-    it "returns the corresponding coordinates for given cell number" do
-      expect(board.number_to_coordinates(1)).to eq([0, 0])
-      expect(board.number_to_coordinates(5)).to eq([1, 1])
-      expect(board.number_to_coordinates(9)).to eq([2, 2])
+      expect(board.draw?).to be true
     end
   end
 end
+

@@ -6,17 +6,17 @@ describe "UI" do
 
   let(:input) { StringIO.new }
   let(:output) { StringIO.new }
-  let(:board) { Board.new }
+  let(:board) { Board.new(3) }
   let(:ui) { UI.new(board, input, output) }
 
-  context "#gets" do
+  context "#input" do
     it "gets the input" do
       input.string = "test"
 
       expect(ui.get_input).to eq("test")
     end
 
-    it "gets player move" do
+    it "returns an integer from the player's move" do
       input.string = "3"
 
       expect(ui.get_move).to be_an(Integer)
@@ -32,20 +32,24 @@ describe "UI" do
   end
 
   context "#board" do
-    it "displays the board" do
-      expect(ui).to receive(:print_message).with(" 1 | 2 | 3 ")
-      expect(ui).to receive(:print_message).with("-----------")
-      expect(ui).to receive(:print_message).with(" 4 | 5 | 6 ")
-      expect(ui).to receive(:print_message).with("-----------")
-      expect(ui).to receive(:print_message).with(" 7 | 8 | 9 ")
+    it "displays the game board" do
+      expect(board).to receive(:game_grid).and_return("game_board")
 
       ui.display_board
     end
   end
 
   context "#messages" do
+    it "prints the invalid grid size message" do
+      correct_message = "Invalid grid size. Try again"
+
+      expect(ui).to receive(:print_message).with(correct_message)
+
+      ui.invalid_grid_size_message
+    end
+
     it "prints the unavailable cell message" do
-      expect(ui).to receive(:print_message).with("Cell unavailable. Try again")
+      expect(ui).to receive(:print_message).with("Cell is unavailable. Try again")
 
       ui.unavailable_cell_message
     end
