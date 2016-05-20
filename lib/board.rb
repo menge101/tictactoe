@@ -1,74 +1,78 @@
-class Board
+require_relative 'cell.rb'
+require_relative 'array_extension.rb'
 
-  attr_reader :grid
+class Board < Array
 
-  def initialize
-    @grid = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+  attr_reader :grid, :grid_size
+
+  def initialize(grid_size, input = {})
+    @grid_size = grid_size
+    @grid = input.fetch(:grid, initialize_grid(grid_size))
   end
 
-  def write_cell(x, y, value)
-    grid[x][y] = value
+  def initialize_grid(grid_size)
+    Array.new(grid_size) { Array.new(grid_size) { Cell.new } }
   end
 
   def get_cell(x, y)
     grid[x][y]
   end
 
+  def write_cell(x, y, value)
+    get_cell(x, y).value = value
+  end
+
   def cell_available?(x, y)
-    get_cell(x, y) != 'X' && get_cell(x, y) != 'O'
+    get_cell(x, y).value != "X" && get_cell(x, y).value != "O"
   end
 
-  def horizontals
-    grid[0].uniq.length == 1 || grid[1].uniq.length == 1 || grid[2].uniq.length == 1
+  def valid_cell_number?(cell_number)
+    max = grid_size * grid_size
+    cell_number >= 1 && cell_number <= max
   end
 
-  def verticals
-    left_vertical || mid_vertical || right_vertical
+  def game_grid
+    current = 0
+    grid.each do |row|
+      puts row.map { |cell| cell.value.empty? ? "-" : cell.value }.join(" | ")
+    end
   end
 
-  def diagonals
-    top_left_bottom_right_diagonal || top_right_bottom_left_diagonal
+  def draw?
+    grid.flatten.map { |cell| cell.value }.none_empty?
   end
 
-  def number_to_coordinates(cell_number)
-    mapping = {
-      1 => [0, 0],
-      2 => [0, 1],
-      3 => [0, 2],
-      4 => [1, 0],
-      5 => [1, 1],
-      6 => [1, 2],
-      7 => [2, 0],
-      8 => [2, 1],
-      9 => [2, 2]
-    }
-    mapping[cell_number]
-  end
-
-  def valid_cell_number(cell_number)
-    cell_number >= 1 && cell_number <= 9
+  def win?
+    winning_situations.each do |winning_situation|
+      if winning_situation_values(winning_situation).all_empty?
+        next
+      elsif winning_situation_values(winning_situation).all_same?
+        return true
+      end
+    end
+    false
   end
 
 
   private
 
-  def left_vertical
-    grid[0][0] == grid[1][0] && grid[0][0] == grid[2][0] && grid[1][0] == grid[2][0]
+  def winning_situation_values(winning_situation)
+    winning_situation.map { |cell| cell.value }
   end
 
-  def mid_vertical
-    grid[0][1] == grid[1][1] && grid[0][1] == grid[2][1] && grid[1][1] == grid[2][1]
+  def winning_situations
+    grid + grid.transpose + diagonals
   end
 
-  def right_vertical
-    grid[0][2] == grid[1][2] && grid[0][2] == grid[2][2] && grid[1][2] == grid[2][2]
-  end
-
-  def top_left_bottom_right_diagonal
-    grid[0][0] == grid[1][1] && grid[0][0] == grid[2][2] && grid[1][1] == grid[2][2]
-  end
-
-  def top_right_bottom_left_diagonal
-    grid[0][2] == grid[1][1] && grid[0][2] == grid[2][0] && grid[1][1] == grid[2][0]
+  def diagonals
+    diagonals_array = []
+    left_diagonal_array = []
+    right_diagonal_array = []
+    (0...grid_size).each do |coordinate|
+      left_diagonal_array << get_cell(coordinate, coordinate)
+      right_diagonal_array << get_cell(coordinate, (grid_size-1)-coordinate)
+    end
+    diagonals_array << left_diagonal_array
+    diagonals_array << right_diagonal_array
   end
 end

@@ -7,34 +7,16 @@ class Game
     @players = players
     @ui = ui
     @current_player, @next_player = players.shuffle
-    @turn_count = 0
   end
 
   def play
-    until win? or draw?
+    until board.win? or board.draw?
       ui.display_board
       ui.player_move_message(current_player.name, current_player.letter)
       player_move
     end
     game_over
   end
-
-  def switch_players
-    @current_player, @next_player = @next_player, @current_player
-  end
-
-  def game_over
-    ui.display_board
-    if win?
-      ui.winner(next_player.name)
-    #elsif draw?
-    else
-      ui.draw
-    end
-  end
-
-
-  private
 
   def player_move
     x, y = get_coordinates
@@ -43,25 +25,46 @@ class Game
       x, y = get_coordinates
     end
     board.write_cell(x, y, current_player.letter)
-    if !win? or !draw?
+    if board.win? or board.draw?
+      return
+    else
       switch_players
-      @turn_count += 1
     end
   end
 
   def get_coordinates(cell_number = ui.get_move)
-    until board.valid_cell_number(cell_number)
+    until board.valid_cell_number?(cell_number)
       ui.invalid_cell_number_message
       cell_number = ui.get_move
     end
-    board.number_to_coordinates(cell_number)
+    number_to_coordinates(cell_number)
   end
 
-  def win?
-    board.horizontals || board.verticals || board.diagonals
+  def switch_players
+    @current_player, @next_player = @next_player, @current_player
   end
 
-  def draw?
-    @turn_count == 9
+
+  private
+
+  def game_over
+    ui.display_board
+    if board.win?
+      ui.winner(current_player.name)
+    elsif board.draw?
+      ui.draw
+    end
+  end
+
+  def number_to_coordinates(cell_number)
+    temp_array = []
+    coordinates_array = []
+    for x in 0...board.grid_size
+      for y in 0...board.grid_size
+        temp_array = [x, y]
+        coordinates_array << temp_array
+      end
+    end
+    coordinates_array[cell_number-1]
   end
 end

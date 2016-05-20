@@ -11,7 +11,7 @@ class UI
   end
 
   def get_input
-    @input.gets
+    @input.gets.chomp
   end
 
   def get_move
@@ -23,15 +23,15 @@ class UI
   end
 
   def display_board
-    print_message(" #{board.grid[0][0]} | #{board.grid[0][1]} | #{board.grid[0][2]} ")
-    print_message("-----------")
-    print_message(" #{board.grid[1][0]} | #{board.grid[1][1]} | #{board.grid[1][2]} ")
-    print_message("-----------")
-    print_message(" #{board.grid[2][0]} | #{board.grid[2][1]} | #{board.grid[2][2]} ")
+    board.game_grid
+  end
+
+  def invalid_grid_size_message
+    print_message("Invalid grid size. Try again")
   end
 
   def unavailable_cell_message
-    print_message("Cell unavailable. Try again")
+    print_message("Cell is unavailable. Try again")
   end
 
   def player_move_message(name, letter)
@@ -49,12 +49,4 @@ class UI
   def draw
     print_message("Cat's game!")
   end
-
-  #def print_outcome(name, game_over)
-  #  if game_over == :winner
-  #    winner(name)
-  #  elsif game_over == :draw
-  #    draw
-  #  end
-  #end
 end
