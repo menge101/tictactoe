@@ -1,9 +1,8 @@
 class DummyUI
 
-  attr_reader :board, :input, :output
+  attr_reader :input, :output
 
-  def initialize(board, input=STDIN, output=STDOUT)
-    @board = board
+  def initialize(input=STDIN, output=STDOUT)
     @input = input
     @output = output
   end
@@ -20,8 +19,16 @@ class DummyUI
     message
   end
 
-  def display_board
-    "board"
+  def get_player_name
+    return "player1", "player2"
+  end
+
+  def get_grid_size
+    3
+  end
+
+  def get_grid_size_message
+    "enter grid size"
   end
 
   def invalid_grid_size_message
