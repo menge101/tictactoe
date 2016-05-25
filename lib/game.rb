@@ -1,35 +1,59 @@
 class Game
+  attr_reader :board, :players, :selection, :ui, :current_player, :next_player
 
-  attr_reader :board, :players, :ui, :current_player, :next_player
-
-  def initialize(board, players, ui)
+  def initialize(board, players, selection, ui)
     @board = board
     @players = players
+    @selection = selection
     @ui = ui
-    @current_player, @next_player = players.shuffle
+    @current_player, @next_player = players
+    @turns = 0
   end
 
   def play
     until board.win? or board.draw?
-      ui.display_board
-      ui.player_move_message(current_player.name, current_player.letter)
+      @turns += 1
+      board.game_grid
       player_move
     end
     game_over
   end
 
   def player_move
-    x, y = get_coordinates
-    until board.cell_available?(x, y)
-      ui.unavailable_cell_message
-      x, y = get_coordinates
+    case selection
+    when 1
+      human_vs_computer
+    when 2
+      human_vs_human
     end
-    board.write_cell(x, y, current_player.letter)
+  end
+
+  def human_vs_computer
+    if @turns.odd?
+      get_human_move
+    else
+      next_player.move
+      ui.print_message("#{next_player.name} (#{next_player.letter}) has played")
+    end
+  end
+
+  def human_vs_human
+    get_human_move
     if board.win? or board.draw?
       return
     else
       switch_players
     end
+  end
+
+  def get_human_move
+    ui.player_move_message(current_player.name, current_player.letter)
+    x, y = get_coordinates
+    until board.cell_available?(x, y)
+      ui.unavailable_cell_message
+      x, y = get_coordinates
+    end
+    current_player.move(x, y, current_player.letter)
   end
 
   def get_coordinates(cell_number = ui.get_move)
@@ -48,9 +72,11 @@ class Game
   private
 
   def game_over
-    ui.display_board
+    board.game_grid
     if board.win?
       ui.winner(current_player.name)
+    elsif board.win? && @turns.even?
+      ui.winner(next_player.name)
     elsif board.draw?
       ui.draw
     end
@@ -59,8 +85,8 @@ class Game
   def number_to_coordinates(cell_number)
     temp_array = []
     coordinates_array = []
-    for x in 0...board.grid_size
-      for y in 0...board.grid_size
+    for y in 0...board.grid_size
+      for x in 0...board.grid_size
         temp_array = [x, y]
         coordinates_array << temp_array
       end

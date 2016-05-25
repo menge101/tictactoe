@@ -1,11 +1,7 @@
-require_relative 'board.rb'
-
 class UI
+  attr_reader :input, :output
 
-  attr_reader :board, :input, :output
-
-  def initialize(board, input=STDIN, output=STDOUT)
-    @board = board
+  def initialize(input=STDIN, output=STDOUT)
     @input = input
     @output = output
   end
@@ -22,8 +18,36 @@ class UI
     @output.puts message
   end
 
-  def display_board
-    board.game_grid
+  def get_selection
+    print_message("Enter 1 for human vs. computer or 2 for human vs. human")
+    selection = get_move
+    until selection > 0 && selection < 3
+      print_message("Invalid selection. Try again")
+      selection = get_move
+    end
+    selection
+  end
+
+  def get_player_name
+    print_message("Enter player 1 name:")
+    player1_name = get_input
+    print_message("Enter player 2 name:")
+    player2_name = get_input
+    return player1_name, player2_name
+  end
+
+  def get_grid_size
+    get_grid_size_message
+    grid_size = get_move
+    until grid_size > 2
+      invalid_grid_size_message
+      grid_size = get_move
+    end
+    grid_size
+  end
+
+  def get_grid_size_message
+    print_message("Enter grid size:")
   end
 
   def invalid_grid_size_message
