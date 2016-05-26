@@ -27,10 +27,18 @@ describe "UI" do
       expect(ui.get_grid_size).to eq(3)
     end
 
-    it "gets the players' names" do
-      allow(ui).to receive(:get_input).and_return("player1", "player2")
+    it "gets the selection for vs. computer or vs. human" do
+      (1..2).each do |selection|
+        allow(ui).to receive(:get_move).and_return(selection)
 
-      expect(ui.get_player_name).to eq(["player1", "player2"])
+        expect(ui.get_selection).to eq(selection)
+      end
+    end
+
+    it "gets the players' names" do
+      allow(ui).to receive(:get_input).and_return("best name")
+
+      expect(ui.get_player_name).to eq("best name")
     end
   end
 
@@ -85,6 +93,27 @@ describe "UI" do
       expect(ui).to receive(:print_message).with("Invalid cell number. Try again")
 
       ui.invalid_cell_number_message
+    end
+  end
+
+  context "#get_selection" do
+    it "prints selection message when get_selection is called" do
+      correct_message = "Enter 1 for human vs. computer or 2 for human vs. human"
+      allow(ui).to receive(:get_move).and_return(2)
+
+      expect(ui).to receive(:print_message).with(correct_message)
+
+      ui.get_selection
+    end
+
+    it "prints the invalid selection message for invalid selection" do
+      correct_message = "Invalid selection. Try again"
+      allow(ui).to receive(:print_message).with("Enter 1 for human vs. computer or 2 for human vs. human")
+      allow(ui).to receive(:get_move).and_return(0, 1)
+
+      expect(ui).to receive(:print_message).with(correct_message)
+
+      ui.get_selection
     end
   end
 

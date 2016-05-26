@@ -7,6 +7,10 @@ describe "TTTBoard" do
   let(:ttt_board) { TTTBoard.new(3) }
 
   context "#initialize" do
+    it "should be an instance of Board" do
+      expect(ttt_board).to be_a(Board)
+    end
+
     it "creates a 3x3 grid by default" do
       grid_size = 3
       ttt_board.grid.each do |column|
@@ -29,13 +33,13 @@ describe "TTTBoard" do
 
   context "#cells" do
     it "returns true if cell is available to write into" do
-      ttt_board.write_cell(0, 0, 'X')
+      ttt_board.write_cell(0, 0, "X")
 
       expect(ttt_board.cell_available?(0, 1)).to be true
     end
 
     it "returns false if cell is unavailable" do
-      ttt_board.write_cell(1, 1, 'O')
+      ttt_board.write_cell(1, 1, "O")
 
       expect(ttt_board.cell_available?(1, 1)).to be false
     end
@@ -55,7 +59,7 @@ describe "TTTBoard" do
     end
 
     it "returns false for an invalid cell number for 4x4 grid !(1-16)" do
-      board = Board.new(4)
+      ttt_board = TTTBoard.new(4)
 
       expect(ttt_board.valid_cell_number?(19)).to be false
     end
@@ -64,8 +68,8 @@ describe "TTTBoard" do
       grid = [["hi", "", ""], ["", "", "test"], ["", "", ""]]
       ttt_board = TTTBoard.new(3, grid: grid)
 
-      expect(ttt_board.get_cell(0, 0)).to eq('hi')
-      expect(ttt_board.get_cell(2, 1)).to eq('test')
+      expect(ttt_board.get_cell(0, 0)).to eq("hi")
+      expect(ttt_board.get_cell(2, 1)).to eq("test")
     end
 
     it "writes to the cell" do
@@ -74,8 +78,8 @@ describe "TTTBoard" do
       ttt_board.write_cell(1, 0, "test")
       ttt_board.write_cell(2, 1, "another test")
 
-      expect(ttt_board.get_cell(1, 0).value).to eq("test")
-      expect(ttt_board.get_cell(2, 1).value).to eq("another test")
+      expect(ttt_board.get_cell(1, 0)).to eq("test")
+      expect(ttt_board.get_cell(2, 1)).to eq("another test")
     end
   end
 
@@ -84,9 +88,9 @@ describe "TTTBoard" do
       board = Board.new(3)
       ttt_board = TTTBoard.new(3, grid: board.generate_board)
 
-      ttt_board.write_cell(2, 0, 'X')
-      ttt_board.write_cell(1, 1, 'X')
-      ttt_board.write_cell(0, 2, 'X')
+      ttt_board.write_cell(2, 0, "X")
+      ttt_board.write_cell(1, 1, "X")
+      ttt_board.write_cell(0, 2, "X")
 
       expect(ttt_board.win?).to be true
     end
@@ -95,9 +99,9 @@ describe "TTTBoard" do
       board = Board.new(3)
       ttt_board = TTTBoard.new(3, grid: board.generate_board)
 
-      ttt_board.write_cell(0, 1, 'X')
-      ttt_board.write_cell(1, 1, 'X')
-      ttt_board.write_cell(2, 1, 'X')
+      ttt_board.write_cell(0, 1, "X")
+      ttt_board.write_cell(1, 1, "X")
+      ttt_board.write_cell(2, 1, "X")
 
       expect(ttt_board.win?).to be true
     end
@@ -106,10 +110,10 @@ describe "TTTBoard" do
       board = Board.new(4)
       ttt_board = TTTBoard.new(4, grid: board.generate_board)
 
-      ttt_board.write_cell(0, 0, 'O')
-      ttt_board.write_cell(0, 1, 'O')
-      ttt_board.write_cell(0, 2, 'O')
-      ttt_board.write_cell(0, 3, 'O')
+      ttt_board.write_cell(0, 0, "O")
+      ttt_board.write_cell(0, 1, "O")
+      ttt_board.write_cell(0, 2, "O")
+      ttt_board.write_cell(0, 3, "O")
 
       expect(ttt_board.win?).to be true
     end
@@ -118,15 +122,15 @@ describe "TTTBoard" do
       board = Board.new(3)
       ttt_board = TTTBoard.new(3, grid: board.generate_board)
 
-      ttt_board.write_cell(0, 0, 'X')
-      ttt_board.write_cell(1, 0, 'O')
-      ttt_board.write_cell(2, 0, 'O')
-      ttt_board.write_cell(0, 1, 'O')
-      ttt_board.write_cell(1, 1, 'O')
-      ttt_board.write_cell(2, 1, 'X')
-      ttt_board.write_cell(0, 2, 'X')
-      ttt_board.write_cell(1, 2, 'X')
-      ttt_board.write_cell(2, 2, 'O')
+      ttt_board.write_cell(0, 0, "X")
+      ttt_board.write_cell(1, 0, "O")
+      ttt_board.write_cell(2, 0, "O")
+      ttt_board.write_cell(0, 1, "O")
+      ttt_board.write_cell(1, 1, "O")
+      ttt_board.write_cell(2, 1, "X")
+      ttt_board.write_cell(0, 2, "X")
+      ttt_board.write_cell(1, 2, "X")
+      ttt_board.write_cell(2, 2, "O")
 
       expect(ttt_board.draw?).to be true
     end

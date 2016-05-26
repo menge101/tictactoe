@@ -8,4 +8,8 @@ class DummyPlayer
     @name = "hey"
     @letter = "X"
   end
+
+  def move(x, y, value)
+    "writes value"
+  end
 end
