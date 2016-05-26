@@ -13,28 +13,25 @@ class TTTBoard < Board
   end
 
   def write_cell(x, y, value)
-    get_cell(x, y).value = value
+    grid[y][x] = value
   end
 
   def cell_available?(x, y)
-    get_cell(x, y).value != "X" && get_cell(x, y).value != "O"
+    get_cell(x, y) != "X" && get_cell(x, y) != "O"
   end
 
   def valid_cell_number?(cell_number)
     cell_number >= 1 && cell_number <= grid_size ** 2
   end
 
-  # fix
   def game_grid
-    @current = 0
     grid.each do |row|
-      puts row.map { |cell| cell.value.empty? ? "-" : cell.value }.join(" | ")
+      puts row.map { |cell| cell }.join(" | ")
     end
   end
-  # /fix
 
   def draw?
-    grid.flatten.map.all? { |cell| cell.value != "" } && !win?
+    grid.flatten.map.all? { |cell| cell == "X" || cell == "O" } && !win?
   end
 
   def win?
@@ -56,7 +53,7 @@ class TTTBoard < Board
   end
 
   def winning_situation_values(winning_situation)
-    winning_situation.map { |cell| cell.value }
+    winning_situation.map { |cell| cell }
   end
 
   def winning_situations

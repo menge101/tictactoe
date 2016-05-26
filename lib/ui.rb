@@ -29,11 +29,8 @@ class UI
   end
 
   def get_player_name
-    print_message("Enter player 1 name:")
-    player1_name = get_input
-    print_message("Enter player 2 name:")
-    player2_name = get_input
-    return player1_name, player2_name
+    print_message("Enter player name:")
+    player_name = get_input
   end
 
   def get_grid_size

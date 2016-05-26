@@ -13,7 +13,6 @@ class Game
   def play
     until board.win? or board.draw?
       @turns += 1
-      board.game_grid
       player_move
     end
     game_over
@@ -22,14 +21,15 @@ class Game
   def player_move
     case selection
     when 1
-      human_vs_computer
+      human_vs_computer_move
     when 2
-      human_vs_human
+      human_vs_human_move
     end
   end
 
-  def human_vs_computer
+  def human_vs_computer_move
     if @turns.odd?
+      board.game_grid
       get_human_move
     else
       next_player.move
@@ -37,7 +37,8 @@ class Game
     end
   end
 
-  def human_vs_human
+  def human_vs_human_move
+    board.game_grid
     get_human_move
     if board.win? or board.draw?
       return
@@ -73,12 +74,21 @@ class Game
 
   def game_over
     board.game_grid
-    if board.win?
-      ui.winner(current_player.name)
-    elsif board.win? && @turns.even?
-      ui.winner(next_player.name)
-    elsif board.draw?
-      ui.draw
+    case selection
+    when 1
+      if board.win? && @turns.even?
+        ui.winner(next_player.name)
+      elsif board.win?
+        ui.winner(current_player.name)
+      elsif board.draw?
+        ui.draw
+      end
+    when 2
+      if board.win?
+        ui.winner(current_player.name)
+      elsif board.draw?
+        ui.draw
+      end
     end
   end
 
