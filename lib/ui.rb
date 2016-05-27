@@ -34,33 +34,17 @@ class UI
   end
 
   def get_grid_size
-    get_grid_size_message
+    print_message("Enter grid size:")
     grid_size = get_move
     until grid_size > 2
-      invalid_grid_size_message
+      print_message("Invalid grid size. Try again")
       grid_size = get_move
     end
     grid_size
   end
 
-  def get_grid_size_message
-    print_message("Enter grid size:")
-  end
-
-  def invalid_grid_size_message
-    print_message("Invalid grid size. Try again")
-  end
-
-  def unavailable_cell_message
-    print_message("Cell is unavailable. Try again")
-  end
-
   def player_move_message(name, letter)
     print_message("#{name} (#{letter}) select a cell:")
-  end
-
-  def invalid_cell_number_message
-    print_message("Invalid cell number. Try again")
   end
 
   def winner(name)

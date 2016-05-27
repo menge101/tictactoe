@@ -16,14 +16,6 @@ class TTTBoard < Board
     grid[y][x] = value
   end
 
-  def cell_available?(x, y)
-    get_cell(x, y) != "X" && get_cell(x, y) != "O"
-  end
-
-  def valid_cell_number?(cell_number)
-    cell_number >= 1 && cell_number <= grid_size ** 2
-  end
-
   def game_grid
     grid.each do |row|
       puts row.map { |cell| cell }.join(" | ")
@@ -43,6 +35,26 @@ class TTTBoard < Board
       end
     end
     false
+  end
+
+  def number_to_coordinates(cell_number)
+    temp_array = []
+    coordinates_array = []
+    for y in 0...grid_size
+      for x in 0...grid_size
+        temp_array = [x, y]
+        coordinates_array << temp_array
+      end
+    end
+    coordinates_array[cell_number-1]
+  end
+
+  def cell_available?(x, y)
+    get_cell(x, y) != "X" && get_cell(x, y) != "O"
+  end
+
+  def valid_cell_number?(cell_number)
+    cell_number >= 1 && cell_number <= grid_size ** 2
   end
 
 

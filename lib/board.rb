@@ -1,5 +1,5 @@
 class Board
-  attr_accessor :grid_size
+  attr_reader :grid_size
 
   def initialize(grid_size)
     @grid_size = grid_size
