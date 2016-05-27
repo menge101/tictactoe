@@ -19,6 +19,10 @@ class DummyUI
     message
   end
 
+  def get_selection
+    1
+  end
+
   def get_player_name
     return "player1", "player2"
   end
@@ -27,24 +31,8 @@ class DummyUI
     3
   end
 
-  def get_grid_size_message
-    "enter grid size"
-  end
-
-  def invalid_grid_size_message
-    "invalid grid size"
-  end
-
-  def unavailable_cell_message
-    "unavailable cell"
-  end
-
   def player_move_message(name, letter)
     "name and letter"
-  end
-
-  def invalid_cell_number_message
-    "invalid cell number"
   end
 
   def winner(name)

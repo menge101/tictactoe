@@ -1,9 +1,7 @@
 require 'rspec'
 require_relative '../lib/ui.rb'
-require_relative '../lib/board.rb'
 
 describe "UI" do
-
   let(:input) { StringIO.new }
   let(:output) { StringIO.new }
   let(:ui) { UI.new(input, output) }
@@ -54,31 +52,20 @@ describe "UI" do
     it "prompts the user to input a grid size" do
       correct_message = "Enter grid size:"
 
+      allow(ui).to receive(:get_move).and_return(3)
       expect(ui).to receive(:print_message).with(correct_message)
 
-      ui.get_grid_size_message
+      ui.get_grid_size
     end
 
     it "prints the invalid grid size message" do
       correct_message = "Invalid grid size. Try again"
 
+      allow(ui).to receive(:print_message).and_return("Enter grid size:")
+      allow(ui).to receive(:get_move).and_return(1, 3)
       expect(ui).to receive(:print_message).with(correct_message)
 
-      ui.invalid_grid_size_message
-    end
-
-    it "displays the incorrect grid size message if grid size is invalid" do
-      allow(ui).to receive(:get_move).and_return(1, 3)
-
-      expect(ui).to receive(:invalid_grid_size_message)
-
       ui.get_grid_size
-    end
-
-    it "prints the unavailable cell message" do
-      expect(ui).to receive(:print_message).with("Cell is unavailable. Try again")
-
-      ui.unavailable_cell_message
     end
 
     it "prints the player move message" do
@@ -87,12 +74,6 @@ describe "UI" do
       name = "Player"
       letter = "X"
       ui.player_move_message(name, letter)
-    end
-
-    it "prints the invalid cell number message" do
-      expect(ui).to receive(:print_message).with("Invalid cell number. Try again")
-
-      ui.invalid_cell_number_message
     end
   end
 

@@ -1,25 +1,27 @@
 require 'rspec'
 require_relative '../lib/computer.rb'
 require_relative '../lib/ttt_board.rb'
+require_relative '../lib/ui.rb'
 
 describe "Computer" do
+  let(:ttt_board) { TTTBoard.new(3) }
+  let(:ui) { UI.new(ttt_board) }
+  let(:computer) { Computer.new(ttt_board, ui, {name: "computer", letter: "O"}) }
+
   context "#computer" do
     it "should be an instance of Player" do
-      ttt_board = TTTBoard.new(3)
-      computer = Computer.new(ttt_board, {name: "computer", letter: "O"})
-
       expect(computer).to be_a Player
     end
   end
 
-  #context "#write" do
-  #  it "writes to a blank cell" do
-  #    ttt_board = TTTBoard.new(3)
-  #    computer = Computer.new(ttt_board, {name: 'computer', letter: 'O'})
+  context "#write" do
+    it "can write to a cell" do
+      allow(ttt_board).to receive(:number_to_coordinates)
+      allow(ttt_board).to receive(:get_cell)
 
-  #    computer.move
+      expect(ttt_board).to receive(:write_cell)
 
-  #    expect(ttt_board.get_cell(0, 0).value).to eq('O')
-  #  end
-  #end
+      computer.move
+    end
+  end
 end
